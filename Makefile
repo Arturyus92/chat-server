@@ -1,4 +1,5 @@
-include prod.env
+include local.env
+
 
 LOCAL_BIN:=$(pwd)/bin
 
