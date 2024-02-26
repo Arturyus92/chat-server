@@ -68,12 +68,12 @@ func (s *server) Create(ctx context.Context, req *desc.CreateRequest) (*desc.Cre
 
 func (s *server) SendMessage(ctx context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
 	// Достаем имя юзер из таблицы users
-	builderSelectUserId := sq.Select("user_id").From("users").
+	builderSelect := sq.Select("user_id").From("users").
 		PlaceholderFormat(sq.Dollar).
 		Where(sq.Eq{"name": req.GetFrom()}).
 		Limit(1)
 
-	query, args, err := builderSelectUserId.ToSql()
+	query, args, err := builderSelect.ToSql()
 	if err != nil {
 		log.Printf("failed to build query: %v", err)
 	}

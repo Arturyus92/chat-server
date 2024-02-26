@@ -20,6 +20,7 @@ type grpcConfig struct {
 	port string
 }
 
+// NewGRPCConfig - ...
 func NewGRPCConfig() (*grpcConfig, error) {
 	host := os.Getenv(grpcHostEnvName)
 	if len(host) == 0 {

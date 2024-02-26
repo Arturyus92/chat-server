@@ -17,6 +17,7 @@ type pgConfig struct {
 	dsn string
 }
 
+// NewPGConfig - ...
 func NewPGConfig() (*pgConfig, error) {
 	dsn := os.Getenv(dsnEnvName)
 	if len(dsn) == 0 {
