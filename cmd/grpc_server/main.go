@@ -18,6 +18,22 @@ import (
 	desc "github.com/Arturyus92/chat-server/pkg/chat_v1"
 )
 
+const (
+	messagesTableName = "messages"
+	chatsTableName    = "chats"
+	usersTableName    = "users"
+
+	colChatID    = "chat_id"
+	colChatTitle = "chat_title"
+
+	colUserID   = "user_id"
+	colUserName = "name"
+
+	colMessageID   = "message_id"
+	colTextMessage = "text_message"
+	colCreatedAt   = "created_at"
+)
+
 var configPath string
 
 func init() {
@@ -31,21 +47,23 @@ type server struct {
 
 func (s *server) Create(ctx context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
 	// Делаем запрос на вставку записи в таблицу chats
-	builderInsert := sq.Insert("chats").
+	builderInsert := sq.Insert(chatsTableName).
 		PlaceholderFormat(sq.Dollar).
-		Columns("chat_title").
+		Columns(colChatTitle).
 		Values(gofakeit.BeerName()). //надо proto-файл менять, пока так
-		Suffix("RETURNING chat_id")
+		Suffix("RETURNING " + colChatID)
 
 	query, args, err := builderInsert.ToSql()
 	if err != nil {
 		log.Printf("failed to build query: %v", err)
+		return nil, err
 	}
 
 	var chatID int64
 	err = s.pool.QueryRow(ctx, query, args...).Scan(&chatID)
 	if err != nil {
 		log.Printf("failed to created chat: %v", err)
+		return nil, err
 	}
 
 	log.Printf("Chat created: %+v", req.String())
@@ -67,15 +85,16 @@ func (s *server) Create(ctx context.Context, req *desc.CreateRequest) (*desc.Cre
 }
 
 func (s *server) SendMessage(ctx context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
-	// Достаем имя юзер из таблицы users
-	builderSelect := sq.Select("user_id").From("users").
+	// Достаем имя юзера из таблицы users
+	builderSelect := sq.Select(colUserID).From(usersTableName).
 		PlaceholderFormat(sq.Dollar).
-		Where(sq.Eq{"name": req.GetFrom()}).
+		Where(sq.Eq{colUserName: req.GetFrom()}).
 		Limit(1)
 
 	query, args, err := builderSelect.ToSql()
 	if err != nil {
 		log.Printf("failed to build query: %v", err)
+		return nil, err
 	}
 
 	var id int64
@@ -83,23 +102,26 @@ func (s *server) SendMessage(ctx context.Context, req *desc.SendMessageRequest) 
 	err = s.pool.QueryRow(ctx, query, args...).Scan(&id)
 	if err != nil {
 		log.Printf("failed to selected user: %v", err)
+		return nil, err
 	}
 
 	// Делаем запрос на вставку записи в таблицу messages
-	builderInsert := sq.Insert("messages").
+	builderInsert := sq.Insert(messagesTableName).
 		PlaceholderFormat(sq.Dollar).
-		Columns("chat_id", "user_id", "text_message ").
+		Columns(colChatID, colUserID, colTextMessage).
 		Values(1, id, req.GetText()). //chat_id is hardcode, but this is temporary
-		Suffix("RETURNING user_id")
+		Suffix("RETURNING " + colUserID)
 
 	query, args, err = builderInsert.ToSql()
 	if err != nil {
 		log.Printf("failed to build query: %v", err)
+		return nil, err
 	}
 
 	_, err = s.pool.Exec(ctx, query, args...)
 	if err != nil {
 		log.Printf("failed to send message: %v", err)
+		return nil, err
 	}
 
 	log.Printf("Send message: %+v", req.GetText())
@@ -108,18 +130,20 @@ func (s *server) SendMessage(ctx context.Context, req *desc.SendMessageRequest) 
 }
 
 func (s *server) Delete(ctx context.Context, req *desc.DeleteRequest) (*emptypb.Empty, error) {
-	builderDelete := sq.Delete("chats").
+	builderDelete := sq.Delete(chatsTableName).
 		PlaceholderFormat(sq.Dollar).
-		Where(sq.Eq{"chat_id": req.Id})
+		Where(sq.Eq{colChatID: req.Id})
 
 	query, args, err := builderDelete.ToSql()
 	if err != nil {
 		log.Printf("failed to build query: %v", err)
+		return nil, err
 	}
 
 	_, err = s.pool.Exec(ctx, query, args...)
 	if err != nil {
 		log.Printf("failed to deleted chat: %v", err)
+		return nil, err
 	}
 	log.Printf("Chat deleted: %+v", req.String())
 
