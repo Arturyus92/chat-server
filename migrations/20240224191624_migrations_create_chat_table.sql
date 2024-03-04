@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS users(
 
 CREATE TABLE IF NOT EXISTS users_chats(
     user_id INT NOT NULL,
-    chat_id INT NOT NULL,
+    chat_id INT NOT NULL
 
     CONSTRAINT fk_users_chats_user_id FOREIGN KEY(user_id) REFERENCES users (user_id) ON DELETE CASCADE,
     CONSTRAINT fk_users_chats_chat_id FOREIGN KEY(chat_id) REFERENCES chats (chat_id) ON DELETE CASCADE
