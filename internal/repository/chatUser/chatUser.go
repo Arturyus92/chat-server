@@ -33,7 +33,8 @@ func (r *Repo) CreateChat(ctx context.Context, chatUser *model.ChatUser) error {
 	builderInsert := sq.Insert(tableName).
 		PlaceholderFormat(sq.Dollar).
 		Columns(colUserID, colChatID).
-		Values(chatUser.UserID, chatUser.ChatID)
+		Values(chatUser.UserID, chatUser.ChatID).
+		Suffix("ON CONFLICT (user_id, chat_id) DO NOTHING")
 
 	log.Printf("User: %d, Chat: %d", chatUser.UserID, chatUser.ChatID)
 
@@ -49,12 +50,12 @@ func (r *Repo) CreateChat(ctx context.Context, chatUser *model.ChatUser) error {
 	}
 
 	var userID, chatID int64
-	_ = r.db.DB().QueryRowContext(ctx, q, args...).Scan(&userID, &chatID)
-	/*
-		if err != nil {
-			log.Printf("failed to created chats_users: %v", err)
-			return err
-		}
-	*/
+	err = r.db.DB().QueryRowContext(ctx, q, args...).Scan(&userID, &chatID)
+
+	if err != nil {
+		log.Printf("failed to created chats_users: %v", err)
+		return err
+	}
+
 	return nil
 }
