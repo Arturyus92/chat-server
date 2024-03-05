@@ -33,8 +33,7 @@ func (r *Repo) CreateChat(ctx context.Context, chatUser *model.ChatUser) error {
 	builderInsert := sq.Insert(tableName).
 		PlaceholderFormat(sq.Dollar).
 		Columns(colUserID, colChatID).
-		Values(chatUser.UserID, chatUser.ChatID).
-		Suffix("ON CONFLICT (user_id, chat_id) DO NOTHING")
+		Values(chatUser.UserID, chatUser.ChatID)
 
 	log.Printf("User: %d, Chat: %d", chatUser.UserID, chatUser.ChatID)
 
