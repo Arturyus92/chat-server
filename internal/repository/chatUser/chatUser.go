@@ -49,8 +49,8 @@ func (r *Repo) CreateChat(ctx context.Context, chatUser *model.ChatUser) error {
 		QueryRaw: query,
 	}
 
-	var userID, chatID int64
-	err = r.db.DB().QueryRowContext(ctx, q, args...).Scan(&userID, &chatID)
+	var userID int64
+	err = r.db.DB().QueryRowContext(ctx, q, args...).Scan(&userID)
 
 	if err != nil {
 		log.Printf("failed to created chats_users: %v", err)
