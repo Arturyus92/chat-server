@@ -24,7 +24,7 @@ type ChatRepository interface {
 
 // MessageRepository - ...
 type MessageRepository interface {
-	SendMessage(ctx context.Context, message *model.Message) error
+	CreateMessage(ctx context.Context, message *model.Message) error
 }
 
 // LogRepository - ...

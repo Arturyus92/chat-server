@@ -39,7 +39,7 @@ func (s *serv) Create(ctx context.Context, chat *model.Chat) (int64, error) {
 			}
 
 			errTx = s.logRepository.CreateLog(ctx, &model.Log{
-				Info: fmt.Sprintf("Chat created: %d", chatID),
+				Text: fmt.Sprintf("Chat created: %d", chatID),
 			})
 			if errTx != nil {
 				return errTx

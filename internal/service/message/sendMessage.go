@@ -8,8 +8,7 @@ import (
 
 // SendMessage - ...
 func (s *serv) SendMessage(ctx context.Context, message *model.Message) error {
-
-	err := s.messageRepository.SendMessage(ctx, message)
+	err := s.messageRepository.CreateMessage(ctx, message)
 
 	if err != nil {
 		return err

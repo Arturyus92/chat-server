@@ -13,7 +13,7 @@ import (
 	"github.com/Arturyus92/chat-server/internal/config/env"
 	"github.com/Arturyus92/chat-server/internal/repository"
 	chatRepository "github.com/Arturyus92/chat-server/internal/repository/chat"
-	chatUserRepository "github.com/Arturyus92/chat-server/internal/repository/chatUser"
+	chatUserRepository "github.com/Arturyus92/chat-server/internal/repository/chat_user"
 	logRepository "github.com/Arturyus92/chat-server/internal/repository/log"
 	messageRepository "github.com/Arturyus92/chat-server/internal/repository/message"
 	userRepository "github.com/Arturyus92/chat-server/internal/repository/user"
@@ -146,20 +146,6 @@ func (s *serviceProvider) LogRepository(ctx context.Context) repository.LogRepos
 	return s.logRepository
 }
 
-/*
-// UserService - ...
-func (s *serviceProvider) UserService(ctx context.Context) service.UserService {
-	if s.userService == nil {
-		s.userService = userService.NewService(
-			s.UserRepository(ctx),
-			s.TxManager(ctx),
-			s.LogRepository(ctx),
-		)
-	}
-
-	return s.userService
-}
-*/
 // ChatService - ...
 func (s *serviceProvider) ChatService(ctx context.Context) service.ChatService {
 	if s.chatService == nil {

@@ -35,26 +35,21 @@ func (r *Repo) CreateChat(ctx context.Context, chatUser *model.ChatUser) error {
 		Columns(colUserID, colChatID).
 		Values(chatUser.UserID, chatUser.ChatID)
 
-	log.Printf("User: %d, Chat: %d", chatUser.UserID, chatUser.ChatID)
-
 	query, args, err := builderInsert.ToSql()
 	if err != nil {
 		log.Printf("failed to build query: %v", err)
 		return err
 	}
-
 	q := db.Query{
 		Name:     "users_chats_repository.Create",
 		QueryRaw: query,
 	}
 
-	var userID, chatID int64
-	_ = r.db.DB().QueryRowContext(ctx, q, args...).Scan(&userID, &chatID)
-	/*
-		if err != nil {
-			log.Printf("failed to created chats_users: %v", err)
-			return err
-		}
-	*/
+	rows, err := r.db.DB().QueryContext(ctx, q, args...)
+	if err != nil {
+		log.Printf("failed to created chats_users: %v", err)
+		return err
+	}
+	defer rows.Close()
 	return nil
 }
