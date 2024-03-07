@@ -13,7 +13,7 @@ services:
     volumes:
       - postgres_volume_prod:/var/lib/postgresql/data
 
-  migrator-prod-chat:
+  migrator-prod:
     build:
       context: .
       dockerfile: migration_prod.Dockerfile
