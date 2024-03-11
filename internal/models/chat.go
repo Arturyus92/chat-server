@@ -4,5 +4,5 @@ package model
 type Chat struct {
 	ID    int64
 	Title string
-	Users []string
+	Users []int64
 }

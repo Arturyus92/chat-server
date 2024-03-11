@@ -5,10 +5,6 @@ import (
 	"log"
 
 	chat "github.com/Arturyus92/chat-server/internal/api"
-	"github.com/Arturyus92/chat-server/internal/client/db"
-	"github.com/Arturyus92/chat-server/internal/client/db/pg"
-	"github.com/Arturyus92/chat-server/internal/client/db/transaction"
-	"github.com/Arturyus92/chat-server/internal/closer"
 	"github.com/Arturyus92/chat-server/internal/config"
 	"github.com/Arturyus92/chat-server/internal/config/env"
 	"github.com/Arturyus92/chat-server/internal/repository"
@@ -20,6 +16,10 @@ import (
 	"github.com/Arturyus92/chat-server/internal/service"
 	chatService "github.com/Arturyus92/chat-server/internal/service/chat"
 	messageService "github.com/Arturyus92/chat-server/internal/service/message"
+	"github.com/Arturyus92/platform_common/pkg/closer"
+	"github.com/Arturyus92/platform_common/pkg/db"
+	"github.com/Arturyus92/platform_common/pkg/db/pg"
+	"github.com/Arturyus92/platform_common/pkg/db/transaction"
 )
 
 type serviceProvider struct {
@@ -152,7 +152,6 @@ func (s *serviceProvider) ChatService(ctx context.Context) service.ChatService {
 		s.chatService = chatService.NewService(
 			s.ChatRepository(ctx),
 			s.ChatUserRepository(ctx),
-			s.UserRepository(ctx),
 			s.LogRepository(ctx),
 			s.TxManager(ctx),
 		)

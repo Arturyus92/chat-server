@@ -8,7 +8,7 @@ import (
 // ToChatCreateFromDesc - ...
 func ToChatCreateFromDesc(chat *desc.ChatInfo) *model.Chat {
 	return &model.Chat{
-		Users: chat.Usernames,
+		Users: chat.UserId,
 		Title: chat.Title,
 	}
 }

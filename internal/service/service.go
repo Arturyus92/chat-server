@@ -6,11 +6,6 @@ import (
 	model "github.com/Arturyus92/chat-server/internal/models"
 )
 
-// UserService - ...
-type UserService interface {
-	Get(ctx context.Context, user *model.User) (int64, error)
-}
-
 // ChatService - ...
 type ChatService interface {
 	Create(ctx context.Context, chat *model.Chat) (int64, error)
