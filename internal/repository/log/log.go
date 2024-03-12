@@ -3,8 +3,8 @@ package log
 import (
 	"context"
 
-	"github.com/Arturyus92/chat-server/internal/client/db"
 	model "github.com/Arturyus92/chat-server/internal/models"
+	"github.com/Arturyus92/platform_common/pkg/db"
 	sq "github.com/Masterminds/squirrel"
 )
 

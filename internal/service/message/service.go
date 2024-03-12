@@ -17,3 +17,17 @@ func NewService(messageRepository repository.MessageRepository) *serv {
 		messageRepository: messageRepository,
 	}
 }
+
+// NewMockService - ...
+func NewMockService(deps ...interface{}) service.MessageService {
+	srv := serv{}
+
+	for _, v := range deps {
+		switch s := v.(type) {
+		case repository.MessageRepository:
+			srv.messageRepository = s
+		}
+	}
+
+	return &srv
+}
