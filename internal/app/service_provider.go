@@ -29,7 +29,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-const authServiceAddress = "auth_service:50052"
+const authServiceAddress = "0.0.0.0:50052"
 
 type serviceProvider struct {
 	pgConfig   config.PGConfig
