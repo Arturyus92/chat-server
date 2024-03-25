@@ -2,7 +2,7 @@ package converter
 
 import (
 	model "github.com/Arturyus92/chat-server/internal/models"
-	modelRepo "github.com/Arturyus92/chat-server/internal/repository/chatUser/model"
+	modelRepo "github.com/Arturyus92/chat-server/internal/repository/chat_user/model"
 )
 
 // ToChatUserFromRepo - ...

@@ -6,11 +6,8 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 
-	"github.com/Arturyus92/chat-server/internal/client/db"
 	model "github.com/Arturyus92/chat-server/internal/models"
-	//modelRepo "github.com/Arturyus92/chat-server/internal/repository/user/model"
-	// "github.com/Arturyus92/chat-server/internal/repository/user/converter"
-	//"github.com/Arturyus92/chat-server/internal/repository/user/model"
+	"github.com/Arturyus92/platform_common/pkg/db"
 )
 
 const (
@@ -48,11 +45,13 @@ func (r *Repo) Get(ctx context.Context, user *model.User) (int64, error) {
 		Name:     "user_repository.Get",
 		QueryRaw: query,
 	}
+
 	var userID int64
 	err = r.db.DB().ScanOneContext(ctx, &userID, q, args...)
 	if err != nil {
 		log.Printf("failed to ScanOneContext: %v", err)
 		return 0, err
 	}
+
 	return userID, nil
 }

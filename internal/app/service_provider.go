@@ -5,22 +5,31 @@ import (
 	"log"
 
 	chat "github.com/Arturyus92/chat-server/internal/api"
-	"github.com/Arturyus92/chat-server/internal/client/db"
-	"github.com/Arturyus92/chat-server/internal/client/db/pg"
-	"github.com/Arturyus92/chat-server/internal/client/db/transaction"
-	"github.com/Arturyus92/chat-server/internal/closer"
+	rpc "github.com/Arturyus92/chat-server/internal/client"
+	accessClient "github.com/Arturyus92/chat-server/internal/client/rpc/access"
 	"github.com/Arturyus92/chat-server/internal/config"
 	"github.com/Arturyus92/chat-server/internal/config/env"
+	"github.com/Arturyus92/chat-server/internal/interceptor"
+	accessInterceptor "github.com/Arturyus92/chat-server/internal/interceptor/access"
 	"github.com/Arturyus92/chat-server/internal/repository"
 	chatRepository "github.com/Arturyus92/chat-server/internal/repository/chat"
-	chatUserRepository "github.com/Arturyus92/chat-server/internal/repository/chatUser"
+	chatUserRepository "github.com/Arturyus92/chat-server/internal/repository/chat_user"
 	logRepository "github.com/Arturyus92/chat-server/internal/repository/log"
 	messageRepository "github.com/Arturyus92/chat-server/internal/repository/message"
 	userRepository "github.com/Arturyus92/chat-server/internal/repository/user"
 	"github.com/Arturyus92/chat-server/internal/service"
 	chatService "github.com/Arturyus92/chat-server/internal/service/chat"
 	messageService "github.com/Arturyus92/chat-server/internal/service/message"
+	access "github.com/Arturyus92/chat-server/pkg/access_v1"
+	"github.com/Arturyus92/platform_common/pkg/closer"
+	"github.com/Arturyus92/platform_common/pkg/db"
+	"github.com/Arturyus92/platform_common/pkg/db/pg"
+	"github.com/Arturyus92/platform_common/pkg/db/transaction"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
+
+const authServiceAddress = "0:0:0:0:50052"
 
 type serviceProvider struct {
 	pgConfig   config.PGConfig
@@ -38,6 +47,9 @@ type serviceProvider struct {
 	messageService service.MessageService
 
 	chatImpl *chat.Implementation
+
+	accessClient      rpc.AccessClient
+	accessInterceptor interceptor.AccessInterceptor
 }
 
 func newServiceProvider() *serviceProvider {
@@ -146,27 +158,12 @@ func (s *serviceProvider) LogRepository(ctx context.Context) repository.LogRepos
 	return s.logRepository
 }
 
-/*
-// UserService - ...
-func (s *serviceProvider) UserService(ctx context.Context) service.UserService {
-	if s.userService == nil {
-		s.userService = userService.NewService(
-			s.UserRepository(ctx),
-			s.TxManager(ctx),
-			s.LogRepository(ctx),
-		)
-	}
-
-	return s.userService
-}
-*/
 // ChatService - ...
 func (s *serviceProvider) ChatService(ctx context.Context) service.ChatService {
 	if s.chatService == nil {
 		s.chatService = chatService.NewService(
 			s.ChatRepository(ctx),
 			s.ChatUserRepository(ctx),
-			s.UserRepository(ctx),
 			s.LogRepository(ctx),
 			s.TxManager(ctx),
 		)
@@ -193,4 +190,27 @@ func (s *serviceProvider) ChatImpl(ctx context.Context) *chat.Implementation {
 	}
 
 	return s.chatImpl
+}
+
+func (s *serviceProvider) AccessInterceptor(ctx context.Context) interceptor.AccessInterceptor {
+	if s.accessInterceptor == nil {
+		s.accessInterceptor = accessInterceptor.NewAccessInterceptor(s.AccessClient(ctx))
+	}
+
+	return s.accessInterceptor
+}
+
+func (s *serviceProvider) AccessClient(ctx context.Context) rpc.AccessClient {
+	if s.accessClient == nil {
+		conn, err := grpc.DialContext(ctx, authServiceAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		if err != nil {
+			log.Fatalf("init AccessClient error")
+		}
+
+		closer.Add(conn.Close)
+
+		s.accessClient = accessClient.NewAccessClient(access.NewAccessV1Client(conn))
+	}
+
+	return s.accessClient
 }

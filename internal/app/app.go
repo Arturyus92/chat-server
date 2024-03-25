@@ -10,9 +10,9 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/Arturyus92/chat-server/internal/closer"
 	"github.com/Arturyus92/chat-server/internal/config"
 	desc "github.com/Arturyus92/chat-server/pkg/chat_v1"
+	"github.com/Arturyus92/platform_common/pkg/closer"
 )
 
 var configPath string
@@ -82,8 +82,10 @@ func (a *App) initServiceProvider(_ context.Context) error {
 }
 
 func (a *App) initGRPCServer(ctx context.Context) error {
-	a.grpcServer = grpc.NewServer(grpc.Creds(insecure.NewCredentials()))
-
+	a.grpcServer = grpc.NewServer(
+		grpc.Creds(insecure.NewCredentials()),
+		grpc.UnaryInterceptor(a.serviceProvider.AccessInterceptor(ctx).Access),
+	)
 	reflection.Register(a.grpcServer)
 
 	desc.RegisterChatV1Server(a.grpcServer, a.serviceProvider.ChatImpl(ctx))

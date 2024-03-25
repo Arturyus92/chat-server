@@ -19,17 +19,9 @@ func (s *serv) Create(ctx context.Context, chat *model.Chat) (int64, error) {
 				return errTx
 			}
 
-			//получаем userID по имени
-			for _, user := range chat.Users {
-				userID, err := s.userRepository.Get(ctx, &model.User{
-					Name: user,
-				})
-				if err != nil {
-					return err
-				}
-
-				//в таблице chatUsers создаем отношение chat-user
-				err = s.chatUserRepository.CreateChat(ctx, &model.ChatUser{
+			//в таблице chatUsers создаем отношение chat-user
+			for _, userID := range chat.Users {
+				err := s.chatUserRepository.CreateChat(ctx, &model.ChatUser{
 					ChatID: chatID,
 					UserID: userID,
 				})
@@ -39,7 +31,7 @@ func (s *serv) Create(ctx context.Context, chat *model.Chat) (int64, error) {
 			}
 
 			errTx = s.logRepository.CreateLog(ctx, &model.Log{
-				Info: fmt.Sprintf("Chat created: %d", chatID),
+				Text: fmt.Sprintf("Chat created: %d", chatID),
 			})
 			if errTx != nil {
 				return errTx

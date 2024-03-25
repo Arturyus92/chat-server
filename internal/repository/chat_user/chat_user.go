@@ -6,8 +6,8 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 
-	"github.com/Arturyus92/chat-server/internal/client/db"
 	model "github.com/Arturyus92/chat-server/internal/models"
+	"github.com/Arturyus92/platform_common/pkg/db"
 )
 
 const (
@@ -35,14 +35,11 @@ func (r *Repo) CreateChat(ctx context.Context, chatUser *model.ChatUser) error {
 		Columns(colUserID, colChatID).
 		Values(chatUser.UserID, chatUser.ChatID)
 
-	log.Printf("User: %d, Chat: %d", chatUser.UserID, chatUser.ChatID)
-
 	query, args, err := builderInsert.ToSql()
 	if err != nil {
 		log.Printf("failed to build query: %v", err)
 		return err
 	}
-
 	q := db.Query{
 		Name:     "users_chats_repository.Create",
 		QueryRaw: query,

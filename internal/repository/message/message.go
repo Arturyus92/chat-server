@@ -6,10 +6,8 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 
-	"github.com/Arturyus92/chat-server/internal/client/db"
 	model "github.com/Arturyus92/chat-server/internal/models"
-	// "github.com/Arturyus92/chat-server/internal/repository/chat/converter"
-	//"github.com/Arturyus92/chat-server/internal/repository/chat/model"
+	"github.com/Arturyus92/platform_common/pkg/db"
 )
 
 const (
@@ -30,8 +28,8 @@ func NewRepository(db db.Client) *Repo {
 	return &Repo{db: db}
 }
 
-// SendMessage - ...
-func (r *Repo) SendMessage(ctx context.Context, message *model.Message) error {
+// CreateMessage - ...
+func (r *Repo) CreateMessage(ctx context.Context, message *model.Message) error {
 	// Делаем запрос на вставку записи в таблицу messages
 	builderInsert := sq.Insert(tableName).
 		PlaceholderFormat(sq.Dollar).
@@ -44,11 +42,11 @@ func (r *Repo) SendMessage(ctx context.Context, message *model.Message) error {
 		log.Printf("failed to build query: %v", err)
 		return err
 	}
-
 	q := db.Query{
 		Name:     "message_repository.Create",
 		QueryRaw: query,
 	}
+
 	var messageID int64
 	err = r.db.DB().QueryRowContext(ctx, q, args...).Scan(&messageID)
 	if err != nil {

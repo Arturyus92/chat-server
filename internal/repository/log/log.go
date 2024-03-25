@@ -3,8 +3,8 @@ package log
 import (
 	"context"
 
-	"github.com/Arturyus92/chat-server/internal/client/db"
 	model "github.com/Arturyus92/chat-server/internal/models"
+	"github.com/Arturyus92/platform_common/pkg/db"
 	sq "github.com/Masterminds/squirrel"
 )
 
@@ -32,7 +32,7 @@ func (r *Repo) CreateLog(ctx context.Context, log *model.Log) error {
 	builderInsert := sq.Insert(tableName).
 		PlaceholderFormat(sq.Dollar).
 		Columns(colInfo).
-		Values(log.Info).
+		Values(log.Text).
 		Suffix("RETURNING " + colLogID)
 
 	query, args, err := builderInsert.ToSql()
@@ -43,6 +43,7 @@ func (r *Repo) CreateLog(ctx context.Context, log *model.Log) error {
 		Name:     "log_repository.CreateLog",
 		QueryRaw: query,
 	}
+
 	var id int64
 	err = r.db.DB().QueryRowContext(ctx, q, args...).Scan(&id)
 	if err != nil {

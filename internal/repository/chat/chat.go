@@ -6,8 +6,8 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 
-	"github.com/Arturyus92/chat-server/internal/client/db"
 	model "github.com/Arturyus92/chat-server/internal/models"
+	"github.com/Arturyus92/platform_common/pkg/db"
 )
 
 const (
@@ -45,6 +45,7 @@ func (r *Repo) Create(ctx context.Context, chat *model.Chat) (int64, error) {
 		Name:     "chat_repository.Create",
 		QueryRaw: query,
 	}
+
 	var chatID int64
 	err = r.db.DB().QueryRowContext(ctx, q, args...).Scan(&chatID)
 	if err != nil {
@@ -71,6 +72,7 @@ func (r *Repo) Delete(ctx context.Context, id int64) error {
 		Name:     "chat_repository.Delete",
 		QueryRaw: query,
 	}
+
 	_, err = r.db.DB().ExecContext(ctx, q, args...)
 	if err != nil {
 		return err

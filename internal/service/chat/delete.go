@@ -9,7 +9,6 @@ import (
 
 // Delete ...
 func (s *serv) Delete(ctx context.Context, id int64) error {
-
 	err := s.txManager.ReadCommitted(
 		ctx, func(ctx context.Context) error {
 			errTx := s.chatRepository.Delete(ctx, id)
@@ -18,7 +17,7 @@ func (s *serv) Delete(ctx context.Context, id int64) error {
 			}
 
 			errTx = s.logRepository.CreateLog(ctx, &model.Log{
-				Info: fmt.Sprintf("Chat deleteted: %d", id),
+				Text: fmt.Sprintf("Chat deleteted: %d", id),
 			})
 			if errTx != nil {
 				return errTx

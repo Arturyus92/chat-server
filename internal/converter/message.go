@@ -7,7 +7,6 @@ import (
 
 // ToSendMessageFromDesc - ...
 func ToSendMessageFromDesc(message *desc.MessageInfo) *model.Message {
-
 	return &model.Message{
 		UserID:      message.From,
 		ChatID:      message.ChatId,
