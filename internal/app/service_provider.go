@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	chat "github.com/Arturyus92/chat-server/internal/api"
@@ -30,7 +29,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-const authServiceAddress = 50052
+const authServiceAddress = "host.docker.internal:50052"
 
 type serviceProvider struct {
 	pgConfig   config.PGConfig
@@ -205,7 +204,7 @@ func (s *serviceProvider) AccessInterceptor(ctx context.Context) interceptor.Acc
 // AccessClient - ...
 func (s *serviceProvider) AccessClient(ctx context.Context) rpc.AccessClient {
 	if s.accessClient == nil {
-		conn, err := grpc.Dial(fmt.Sprintf(":%d", authServiceAddress), grpc.WithTransportCredentials(insecure.NewCredentials()))
+		conn, err := grpc.Dial(authServiceAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			log.Fatalf("init AccessClient error")
 		}
