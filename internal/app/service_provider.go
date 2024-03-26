@@ -29,7 +29,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-const authServiceAddress = "0.0.0.0:50052"
+const authServiceAddress = "host.docker.internal:50052"
 
 type serviceProvider struct {
 	pgConfig   config.PGConfig
@@ -202,8 +202,8 @@ func (s *serviceProvider) AccessInterceptor(ctx context.Context) interceptor.Acc
 
 func (s *serviceProvider) AccessClient(ctx context.Context) rpc.AccessClient {
 	if s.accessClient == nil {
-		//conn, err := grpc.DialContext(ctx, authServiceAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
-		conn, err := grpc.Dial(authServiceAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		conn, err := grpc.DialContext(ctx, authServiceAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		//conn, err := grpc.Dial(authServiceAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			log.Fatalf("init AccessClient error")
 		}
