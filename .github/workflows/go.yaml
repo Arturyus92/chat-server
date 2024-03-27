@@ -58,4 +58,4 @@ jobs:
             docker rm $CONTAINER_NAME
             
             # Run a new container from a new image
-            docker run -d -p 50054:50054 --network=chat_service_default --name $CONTAINER_NAME -t $REGISTRY/$IMAGE_NAME:$TAG_NAME
+            docker run -d -p 50054:50054 --network=service-net --name $CONTAINER_NAME -t $REGISTRY/$IMAGE_NAME:$TAG_NAME
