@@ -29,7 +29,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-const authServiceAddress = "host.docker.internal:50052"
+const authServiceAddress = "auth_service-container:50052"
 
 type serviceProvider struct {
 	pgConfig   config.PGConfig
