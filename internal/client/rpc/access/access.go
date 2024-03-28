@@ -10,14 +10,14 @@ type accessClient struct {
 	client access.AccessV1Client
 }
 
-// NewAccessClient-...
+// NewAccessClient ...
 func NewAccessClient(client access.AccessV1Client) *accessClient {
 	return &accessClient{
 		client: client,
 	}
 }
 
-// Check-...
+// Check ...
 func (a *accessClient) Check(ctx context.Context, address string) error {
 	_, err := a.client.Check(
 		ctx, &access.CheckRequest{

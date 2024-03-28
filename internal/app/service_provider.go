@@ -193,16 +193,16 @@ func (s *serviceProvider) ChatImpl(ctx context.Context) *chat.Implementation {
 }
 
 // AccessInterceptor - ...
-func (s *serviceProvider) AccessInterceptor(ctx context.Context) interceptor.AccessInterceptor {
+func (s *serviceProvider) AccessInterceptor() interceptor.AccessInterceptor {
 	if s.accessInterceptor == nil {
-		s.accessInterceptor = accessInterceptor.NewAccessInterceptor(s.AccessClient(ctx))
+		s.accessInterceptor = accessInterceptor.NewAccessInterceptor(s.AccessClient())
 	}
 
 	return s.accessInterceptor
 }
 
 // AccessClient - ...
-func (s *serviceProvider) AccessClient(ctx context.Context) rpc.AccessClient {
+func (s *serviceProvider) AccessClient() rpc.AccessClient {
 	if s.accessClient == nil {
 		conn, err := grpc.Dial(authServiceAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {

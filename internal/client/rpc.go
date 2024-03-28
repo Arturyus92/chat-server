@@ -2,7 +2,7 @@ package rpc
 
 import "context"
 
-//AccessClient-...
+//AccessClient ...
 type AccessClient interface {
 	Check(ctx context.Context, address string) error
 }
