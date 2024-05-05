@@ -1,6 +1,6 @@
 module github.com/Arturyus92/chat-server
 
-go 1.19
+go 1.21
 
 require (
 	github.com/Arturyus92/platform_common v0.0.0-20240306180930-a075806f56be
